@@ -50,7 +50,7 @@ if __name__ == "__main__":
             print(entry[0], year, rating)
             plot_entries.append((year, rating, remake))
 
-    years, ratings, remakes = *zip(*plot_entries)
-
+    years, ratings, remakes = list(zip(*plot_entries))
+    colors = ["red" if r else "blue" for r in remakes]
     plt.scatter(years, ratings, c=colors)
     plt.show()
