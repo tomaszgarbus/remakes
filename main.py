@@ -41,8 +41,16 @@ if __name__ == "__main__":
         rdr = csv.reader(fp)
         for line in rdr:
             entries.append(tuple(line))
+
+    plot_entries = []
     for entry in entries:
-        for year in [entry[1], entry[2]]:
+        for year, remake in [(entry[1], False), (entry[2], True)]:
             response = get_movie_metadata(entry[0], year)
             rating = compute_avg_rating(response)
             print(entry[0], year, rating)
+            plot_entries.append((year, rating, remake))
+
+    years, ratings, remakes = *zip(*plot_entries)
+
+    plt.scatter(years, ratings, c=colors)
+    plt.show()
