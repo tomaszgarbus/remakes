@@ -42,15 +42,42 @@ if __name__ == "__main__":
         for line in rdr:
             entries.append(tuple(line))
 
+    fig, ax = plt.subplots()
+
+    orig_id = {}
+
     plot_entries = []
     for entry in entries:
-        for year, remake in [(entry[1], False), (entry[2], True)]:
-            response = get_movie_metadata(entry[0], year)
-            rating = compute_avg_rating(response)
-            print(entry[0], year, rating)
-            plot_entries.append((year, rating, remake))
+        title_orig, year_orig, title_remake, year_remake = entry
+        if title_orig not in orig_id:
+            orig_id[title_orig] = len(orig_id) + 1
+        year_orig = int(year_orig)
+        year_remake = int(year_remake)
+        rating_orig = compute_avg_rating(
+            get_movie_metadata(title_orig, year_orig))
+        rating_remake = compute_avg_rating(
+            get_movie_metadata(title_remake, year_remake))
+        plot_entries.append(
+            (orig_id[title_orig], title_orig, year_orig, rating_orig, False))
+        plot_entries.append(
+            (orig_id[title_orig], title_remake, year_remake, rating_remake,
+            True))
+        xs = [year_orig, year_remake]
+        ys = [rating_orig, rating_remake]
+        ax.plot(xs, ys, color="lightgrey", linestyle="dashed",
+            linewidth=1)
 
-    years, ratings, remakes = list(zip(*plot_entries))
-    colors = ["red" if r else "blue" for r in remakes]
-    plt.scatter(years, ratings, c=colors)
+    ids, titles, years, ratings, remakes = list(zip(*plot_entries))
+    color_mapping = { True: "red", False: "blue"}
+    colors = [color_mapping[r] for r in remakes]
+    ax.scatter(years, ratings, c=colors, s=120)
+    for i, title, year, rating, remake in zip(
+        ids, titles, years, ratings, remakes):
+        ax.annotate(i, (year + 2, rating), color=color_mapping[remake])
+    
+    legend = sorted([(orig_id[title], title) for title in orig_id])
+    legend = [f"{i}: {title}" for i, title in legend]
+    ax.legend(legend)
+    ax.set_ylabel("Avg. rating on imdb")
+    ax.set_xlabel("year")
     plt.show()
