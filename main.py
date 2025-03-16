@@ -36,8 +36,11 @@ def compute_avg_rating(response) -> float:
     return np.mean(ratings)
 
 PRIMARY = "#00ffff"
-ORIG = "blue"
-REMAKE = "red"
+ORIG = "#00ffff"
+ORIG="yellow"
+REMAKE = "#ff008c"
+DASHED="lightgrey"
+DASHED=PRIMARY
 
 
 if __name__ == "__main__":
@@ -70,7 +73,7 @@ if __name__ == "__main__":
             True))
         xs = [year_orig, year_remake]
         ys = [rating_orig, rating_remake]
-        ax.plot(xs, ys, color="lightgrey", linestyle="dashed",
+        ax.plot(xs, ys, color=DASHED, linestyle="dashed",
             linewidth=1)
 
     ids, titles, years, ratings, remakes = list(zip(*plot_entries))
@@ -96,6 +99,7 @@ if __name__ == "__main__":
     ax.spines['left'].set_color(PRIMARY)
     ax.spines['right'].set_color(PRIMARY)
     ax.xaxis.label.set_color(PRIMARY)
+    ax.yaxis.label.set_color(PRIMARY)
     ax.tick_params(axis='x', colors=PRIMARY)
     ax.tick_params(axis='y', colors=PRIMARY)
     plt.show()
