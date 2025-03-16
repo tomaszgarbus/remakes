@@ -35,6 +35,11 @@ def compute_avg_rating(response) -> float:
     ratings.append(float(response["imdbRating"]) / 100.)
     return np.mean(ratings)
 
+PRIMARY = "#00ffff"
+ORIG = "blue"
+REMAKE = "red"
+
+
 if __name__ == "__main__":
     entries = []
     with open(CSV_PATH, "r") as fp:
@@ -43,6 +48,7 @@ if __name__ == "__main__":
             entries.append(tuple(line))
 
     fig, ax = plt.subplots()
+    plt.subplots_adjust(left=0.05, right=0.99, top=0.99, bottom=0.05)
 
     orig_id = {}
 
@@ -68,16 +74,28 @@ if __name__ == "__main__":
             linewidth=1)
 
     ids, titles, years, ratings, remakes = list(zip(*plot_entries))
-    color_mapping = { True: "red", False: "blue"}
+    color_mapping = { True: REMAKE, False: ORIG}
     colors = [color_mapping[r] for r in remakes]
     ax.scatter(years, ratings, c=colors, s=120)
     for i, title, year, rating, remake in zip(
         ids, titles, years, ratings, remakes):
-        ax.annotate(i, (year + 2, rating), color=color_mapping[remake])
+        ax.annotate(
+            i, (year + 1, rating), color=color_mapping[remake], fontsize=12)
     
     legend = sorted([(orig_id[title], title) for title in orig_id])
     legend = [f"{i}: {title}" for i, title in legend]
-    ax.legend(legend)
+    l = ax.legend(legend, facecolor="black", edgecolor="black")
+    for text in l.get_texts():
+        text.set_color(PRIMARY)
     ax.set_ylabel("Avg. rating on imdb")
     ax.set_xlabel("year")
+    ax.set_facecolor("black")
+    fig.set_facecolor("black")
+    ax.spines['bottom'].set_color(PRIMARY)
+    ax.spines['top'].set_color(PRIMARY)
+    ax.spines['left'].set_color(PRIMARY)
+    ax.spines['right'].set_color(PRIMARY)
+    ax.xaxis.label.set_color(PRIMARY)
+    ax.tick_params(axis='x', colors=PRIMARY)
+    ax.tick_params(axis='y', colors=PRIMARY)
     plt.show()
